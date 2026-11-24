@@ -9,6 +9,7 @@ import postgres from "postgres";
 import { PGlite } from "@electric-sql/pglite";
 import { PGLiteSocketServer } from "@electric-sql/pglite-socket";
 import { hashPassword } from "../lib/password.ts";
+import { bateria } from "./seguranca.mjs";
 import { criarUtilizador } from "../lib/utilizadores-core.ts";
 import { associarDocente, criarCurso, criarDocente, criarFaculdade, criarTurma } from "../lib/estrutura-core.ts";
 
@@ -45,6 +46,14 @@ const f = await criarFaculdade(sql, { nome: "FENT", sigla: "FENT" });
 const c = await criarCurso(sql, { faculdadeId: f.id, nome: "Eng. Informática", codigo: "EI" });
 const t = await criarTurma(sql, { cursoId: c.id, ano: 3, designacao: "A", periodo: "MANHA", semestre: "2026-S2", totalEstimado: 40 });
 const CODIGO = t.extra;
+let tdB = 0;
+for (const d of ["B", "C", "D"]) {
+  const x = await criarTurma(sql, { cursoId: c.id, ano: 3, designacao: d, periodo: "MANHA", semestre: "2026-S2", totalEstimado: 40 });
+  if (d === "B") {
+    const doc = await criarDocente(sql, { nome: "Docente Outra Turma", codigo: null, grau: null });
+    tdB = (await associarDocente(sql, { turmaId: x.id, docenteId: doc.id, disciplina: "Disciplina da turma B" })).id;
+  }
+}
 for (const [n, disc] of [["Docente Um", "Algoritmos"], ["Docente Dois", "Redes"]]) {
   const d = await criarDocente(sql, { nome: n, codigo: null, grau: null });
   await associarDocente(sql, { turmaId: t.id, docenteId: d.id, disciplina: disc });
@@ -383,6 +392,8 @@ try {
   check("T6: observador não exporta CSV nem PDF (403)", obsCsv.status() === 403 && obsPdf.status() === 403);
   const anon = await browser.newContext();
   check("sem sessão a exportação devolve 401", (await anon.request.get(`${base}/api/export/pdf?ciclo=${cid}`)).status() === 401);
+  await bateria({ base, browser, gae, dp, sql, turmaA: t.id, tdB, codigo: CODIGO, check });
+
   check("nenhuma violação da CSP em todas as páginas visitadas", violacoes.length === 0, violacoes[0] ?? "");
 } catch (e) {
   check("execução sem exceções", false, String(e).split("\n")[0]);
