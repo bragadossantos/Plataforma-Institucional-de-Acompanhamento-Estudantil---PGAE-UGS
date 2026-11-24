@@ -91,3 +91,15 @@ export const utilizadorSchema = z.object({
     .transform((v) => (v === undefined || v === "" ? null : Number(v)))
     .pipe(z.number().int().positive().nullable()),
 });
+
+// ---------------------------------------------------------------------
+// Ciclos de avaliação (GAE)
+// ---------------------------------------------------------------------
+const dataISO = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida.");
+
+export const cicloSchema = z.object({
+  titulo: texto(120),
+  semestre: texto(20).pipe(z.string().regex(/^\d{4}-S[12]$/, "Formato do semestre: 2026-S2.")),
+  inicio: dataISO,
+  fim: dataISO,
+});
