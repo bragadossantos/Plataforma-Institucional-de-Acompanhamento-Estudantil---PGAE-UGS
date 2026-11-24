@@ -1,0 +1,37 @@
+name: PR target guard
+
+# Garante o fluxo: branches de trabalho -> develop -> main.
+# Qualquer PR para main que não venha de develop falha.
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, reopened, synchronize, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: Verificar origem e nome da branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR para main só a partir de develop
+        if: github.base_ref == 'main'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$HEAD_REF" != "develop" ]; then
+            echo "::error::PRs para main só são aceites a partir de develop (recebido: $HEAD_REF). Abra o PR para develop."
+            exit 1
+          fi
+
+      - name: Nome da branch em kebab-case
+        if: github.base_ref == 'develop'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if ! echo "$HEAD_REF" | grep -Eq '^(feat|fix|hotfix|docs|refactor|test|chore|ci|style|perf|build)/[a-z0-9]+(-[a-z0-9]+)*$'; then
+            echo "::error::Nome de branch inválido: $HEAD_REF. Use <tipo>/<descricao-em-kebab-case>, ex.: feat/votacao-anonima."
+            exit 1
+          fi
