@@ -35,7 +35,7 @@ export function navFor(role: Role): NavItem[] {
     case "GAE_ADMIN":
       return [
         { label: "Painel", href: "/gae", ready: true },
-        { label: "Estrutura", href: "/gae/estrutura", ready: false },
+        { label: "Estrutura", href: "/gae/estrutura", ready: true },
         { label: "Utilizadores", href: "/gae/utilizadores", ready: false },
         { label: "Ciclos", href: "/gae/ciclos", ready: false },
         { label: "Auditorias", href: "/gae/auditorias", ready: false },
