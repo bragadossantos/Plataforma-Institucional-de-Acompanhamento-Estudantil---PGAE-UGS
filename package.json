@@ -13,7 +13,9 @@
     "test": "node --test tests/*.test.ts",
     "db:local": "node db/dev-server.ts",
     "db:upgrade": "node --env-file=.env.local db/upgrade.ts",
-    "e2e": "node e2e/run.mjs"
+    "e2e": "node e2e/run.mjs",
+    "verificar:bundle": "node --env-file=.env.local scripts/verificar-bundle.mjs .next-build",
+    "e2e:prod": "node e2e/run.mjs --prod"
   },
   "dependencies": {
     "next": "^16.4.6",

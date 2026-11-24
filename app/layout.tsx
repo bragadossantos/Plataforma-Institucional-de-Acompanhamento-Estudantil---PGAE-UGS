@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
@@ -25,6 +26,8 @@ export const metadata: Metadata = {
   title: "PGAE · UGS",
   description:
     "Plataforma Institucional de Acompanhamento Estudantil — GAE, Universidade Gregório Semedo.",
+  // Ferramenta institucional: não deve aparecer nos motores de pesquisa.
+  robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {
@@ -33,7 +36,9 @@ export const viewport: Viewport = {
   themeColor: "#10162b",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Ler os cabeçalhos torna todas as páginas dinâmicas, o que o Next exige para aplicar o nonce da CSP.
+  await headers();
   return (
     <html
       lang="pt-AO"
