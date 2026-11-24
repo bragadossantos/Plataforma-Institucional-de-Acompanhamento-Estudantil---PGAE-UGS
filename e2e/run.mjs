@@ -58,14 +58,15 @@ const del = await criarUtilizador(sql, { nome: "Delegado E2E", identificador: "d
 const obs = await criarUtilizador(sql, { nome: "Observador E2E", identificador: "observador.e2e@ugs.local", role: "FENT_OBSERVER", turmaId: null }, adm[0].id);
 
 // 2) Servidor Next próprio
-const web = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "-p", String(portaWeb), "-H", "127.0.0.1"], {
+const PROD = process.env.E2E_PROD === "1" || process.argv.includes("--prod"); // npm run e2e:prod: servidor de produção (usa o build em .next-build)
+const web = spawn(process.execPath, ["node_modules/next/dist/bin/next", PROD ? "start" : "dev", "-p", String(portaWeb), "-H", "127.0.0.1"], {
   env: {
     ...process.env,
     DATABASE_URL,
     SESSION_SECRET: hex(32),
     VOTE_PEPPER: hex(32),
     IP_SALT: hex(16),
-    NEXT_DIST_DIR: ".next-e2e",
+    NEXT_DIST_DIR: PROD ? ".next-build" : ".next-e2e",
     NEXT_TELEMETRY_DISABLED: "1",
   },
   stdio: ["ignore", "pipe", "pipe"],
@@ -91,6 +92,44 @@ for (const rota of ["/login", "/votar"]) {
 let browser;
 try {
   browser = await chromium.launch({ channel: "msedge" });
+
+  // Qualquer violação da CSP em qualquer página, em qualquer contexto, falha o teste.
+  const violacoes = [];
+  const novoContexto = browser.newContext.bind(browser);
+  browser.newContext = async (...args) => {
+    const ctx = await novoContexto(...args);
+    ctx.on("page", (p) => {
+      p.on("console", (m) => {
+        if (/Content Security Policy|Refused to (execute|load|apply|connect)/i.test(m.text())) violacoes.push(m.text().slice(0, 160));
+      });
+      p.on("pageerror", (e) => {
+        if (/Content Security Policy/i.test(String(e))) violacoes.push(String(e).slice(0, 160));
+      });
+    });
+    return ctx;
+  };
+
+  // ------------------------------------------------------------------ Cabeçalhos de segurança
+  console.log("\nCabeçalhos de segurança" + (PROD ? " (produção)" : " (desenvolvimento)"));
+  const h = (await fetch(base + "/login")).headers;
+  const csp = h.get("content-security-policy") ?? "";
+  check("CSP com nonce por pedido, frame-ancestors 'none' e object-src 'none'", /script-src[^;]*'nonce-[^']+'/.test(csp) && csp.includes("frame-ancestors 'none'") && csp.includes("object-src 'none'"));
+  const n1 = /'nonce-([^']+)'/.exec(csp)?.[1];
+  const n2 = /'nonce-([^']+)'/.exec((await fetch(base + "/login")).headers.get("content-security-policy") ?? "")?.[1];
+  check("o nonce muda em cada pedido", Boolean(n1 && n2 && n1 !== n2));
+  check("X-Frame-Options DENY e X-Content-Type-Options nosniff", h.get("x-frame-options") === "DENY" && h.get("x-content-type-options") === "nosniff");
+  check("Referrer-Policy e Permissions-Policy definidos", h.get("referrer-policy") === "strict-origin-when-cross-origin" && (h.get("permissions-policy") ?? "").includes("camera=()"));
+  check("sem cabeçalho X-Powered-By", h.get("x-powered-by") === null);
+  if (PROD) {
+    check("HSTS ativo em produção", (h.get("strict-transport-security") ?? "").includes("max-age=31536000"));
+    check("sem 'unsafe-eval' em produção", !csp.includes("unsafe-eval"));
+    check("upgrade-insecure-requests em produção", csp.includes("upgrade-insecure-requests"));
+  }
+  check("robots.txt proíbe indexação", (await (await fetch(base + "/robots.txt")).text()).includes("Disallow: /"));
+  const nf = await fetch(base + "/nao-existe");
+  const nft = await nf.text();
+  check("404 amigável, sem stack trace", nf.status === 404 && nft.includes("Página não encontrada") && !/\bat \w+ \(/.test(nft));
+
 
   // ------------------------------------------------------------------ GAE (desktop)
   console.log("\nGAE no desktop");
@@ -344,6 +383,7 @@ try {
   check("T6: observador não exporta CSV nem PDF (403)", obsCsv.status() === 403 && obsPdf.status() === 403);
   const anon = await browser.newContext();
   check("sem sessão a exportação devolve 401", (await anon.request.get(`${base}/api/export/pdf?ciclo=${cid}`)).status() === 401);
+  check("nenhuma violação da CSP em todas as páginas visitadas", violacoes.length === 0, violacoes[0] ?? "");
 } catch (e) {
   check("execução sem exceções", false, String(e).split("\n")[0]);
   console.error(e);
