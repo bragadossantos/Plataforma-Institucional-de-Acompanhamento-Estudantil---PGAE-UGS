@@ -263,6 +263,15 @@ try {
 
   await gae.goto(`${base}/gae/auditorias`);
   check("a ocorrência aparece de imediato na fila do GAE", (await gae.textContent("main")).includes("Projetor da sala 12 avariado"));
+
+  // ------------------------------------------------------------------ Dashboard BI (T5)
+  console.log("\nDashboard de BI");
+  await gae.goto(`${base}/gae`);
+  const dash = await gae.textContent("main");
+  check("dashboard mostra os 4 KPIs", ["Taxa de adesão global", "Média pedagógica UGS", "Docentes em destaque", "Alertas críticos abertos"].every((k) => dash.includes(k)));
+  check("T5: com 1 voto o docente mostra o aviso de amostra insuficiente", dash.includes("Amostra insuficiente para preservação do anonimato (< 5 votos)"));
+  check("T5: nenhuma classificação nem média de um grupo com < 5 votos", !dash.includes("Docente Destaque") && !dash.includes("Alerta Pedagógico"));
+  check("o alerta crítico da ocorrência do delegado aparece no painel", dash.includes("Projetor da sala 12 avariado"));
 } catch (e) {
   check("execução sem exceções", false, String(e).split("\n")[0]);
   console.error(e);
