@@ -36,7 +36,7 @@ export function navFor(role: Role): NavItem[] {
       return [
         { label: "Painel", href: "/gae", ready: true },
         { label: "Estrutura", href: "/gae/estrutura", ready: true },
-        { label: "Utilizadores", href: "/gae/utilizadores", ready: false },
+        { label: "Utilizadores", href: "/gae/utilizadores", ready: true },
         { label: "Ciclos", href: "/gae/ciclos", ready: false },
         { label: "Auditorias", href: "/gae/auditorias", ready: false },
         { label: "Relatórios", href: "/gae/relatorios", ready: false },

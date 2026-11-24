@@ -1,0 +1,30 @@
+"use client";
+
+import { useActionState } from "react";
+import type { Acao, AcaoState } from "./form-acao";
+
+/** Botão de ação sobre uma linha (id escondido) que mostra o resultado, incl. mensagens de uma só vez. */
+export function AcaoLinha({ action, id, label }: { action: Acao; id: number; label: string }) {
+  const [state, formAction, pending] = useActionState<AcaoState, FormData>(action, {});
+  return (
+    <form action={formAction} className="flex flex-col gap-1">
+      <input type="hidden" name="id" value={id} />
+      <button
+        disabled={pending}
+        className="min-h-11 rounded-control border border-border px-3 text-sm font-semibold hover:bg-bg disabled:opacity-60"
+      >
+        {label}
+      </button>
+      {state.erro && (
+        <p role="alert" className="text-xs font-semibold text-crit">
+          {state.erro}
+        </p>
+      )}
+      {state.ok && (
+        <p role="status" className="rounded-control bg-ok-bg px-2 py-1 text-xs font-semibold text-ok">
+          {state.ok}
+        </p>
+      )}
+    </form>
+  );
+}

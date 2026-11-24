@@ -73,3 +73,21 @@ export const associacaoSchema = z.object({
 });
 
 export const alternarSchema = z.object({ id: idPositivo });
+
+// ---------------------------------------------------------------------
+// Utilizadores (GAE_ADMIN)
+// ---------------------------------------------------------------------
+export const utilizadorSchema = z.object({
+  nome: texto(150),
+  identificador: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .pipe(z.string().min(3, "Identificador: mínimo 3 caracteres.").max(120).regex(/^\S+$/, "Identificador sem espaços.")),
+  role: z.enum(["GAE_ADMIN", "GAE_ANALISTA", "DELEGADO", "SUBDELEGADO", "SECRETARIO", "FENT_OBSERVER"], "Selecione o perfil."),
+  turmaId: z
+    .string()
+    .optional()
+    .transform((v) => (v === undefined || v === "" ? null : Number(v)))
+    .pipe(z.number().int().positive().nullable()),
+});
