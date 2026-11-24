@@ -4,11 +4,23 @@ import { useActionState } from "react";
 import type { Acao, AcaoState } from "./form-acao";
 
 /** Botão de ação sobre uma linha (id escondido) que mostra o resultado, incl. mensagens de uma só vez. */
-export function AcaoLinha({ action, id, label }: { action: Acao; id: number; label: string }) {
+export function AcaoLinha({
+  action,
+  id,
+  label,
+  extra,
+}: {
+  action: Acao;
+  id: number;
+  label: string;
+  /** Campos escondidos adicionais, ex.: { visivel: "1" } */
+  extra?: Record<string, string>;
+}) {
   const [state, formAction, pending] = useActionState<AcaoState, FormData>(action, {});
   return (
     <form action={formAction} className="flex flex-col gap-1">
       <input type="hidden" name="id" value={id} />
+      {extra && Object.entries(extra).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
       <button
         disabled={pending}
         className="min-h-11 rounded-control border border-border px-3 text-sm font-semibold hover:bg-bg disabled:opacity-60"

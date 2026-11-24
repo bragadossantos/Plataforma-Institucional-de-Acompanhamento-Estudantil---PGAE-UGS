@@ -132,3 +132,30 @@ export const auditoriaSchema = z.object({
     .transform((s) => s.replace(/<[^>]*>/g, "").trim())
     .pipe(z.string().min(20, "Descreva o facto com pelo menos 20 caracteres.").max(4000, "Máximo 4000 caracteres.")),
 });
+
+// ---------------------------------------------------------------------
+// Triagem de ocorrências e curadoria FENT (GAE)
+// ---------------------------------------------------------------------
+export const estadoAuditoriaSchema = z.object({
+  id: idPositivo,
+  estado: z.enum(["EM_ANALISE", "ENCAMINHADO_DIRECAO", "RESOLVIDO", "ARQUIVADO"], "Selecione o novo estado."),
+  parecer: opcional(2000),
+});
+
+export const fentAuditoriaSchema = z.object({
+  id: idPositivo,
+  // checkbox: presente ("on") = ligar; ausente = desligar
+  ativo: z
+    .string()
+    .optional()
+    .transform((v) => v === "on"),
+  resumo: opcional(300),
+});
+
+export const inquietacaoVisivelSchema = z.object({
+  id: idPositivo,
+  visivel: z
+    .string()
+    .optional()
+    .transform((v) => v === "1"),
+});

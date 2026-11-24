@@ -102,7 +102,7 @@ Ecrã 2: um cartão por docente, critérios com cinco botões `1–5` grandes. E
 
 - Barra lateral em Azul-Noite com itens por perfil (o menu só mostra o que o perfil pode usar); no telemóvel passa a gaveta.
 - Topo fixo com 4 KPIs e filtros instantâneos; botão de exportação no canto superior direito (laranja, único CTA).
-- O Observador FENT vê só `/insights`, com um aviso permanente de "dados anonimizados e aprovados pelo GAE".
+- O Observador vê só `/insights`, com um aviso permanente de "dados anonimizados e aprovados pelo GAE".
 
 ## 6. Componentes principais
 

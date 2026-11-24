@@ -20,7 +20,7 @@ const adminId = required("SEED_ADMIN_IDENTIFICADOR");
 const adminNome = process.env.SEED_ADMIN_NOME ?? "Administrador GAE";
 const adminPass = required("SEED_ADMIN_PASSWORD");
 const obsId = required("SEED_OBSERVER_IDENTIFICADOR");
-const obsNome = process.env.SEED_OBSERVER_NOME ?? "Observador FENT Fest";
+const obsNome = process.env.SEED_OBSERVER_NOME ?? "Observador";
 const obsPass = required("SEED_OBSERVER_PASSWORD");
 
 for (const p of [adminPass, obsPass]) {
