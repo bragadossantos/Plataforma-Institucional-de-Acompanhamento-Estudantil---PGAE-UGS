@@ -113,3 +113,22 @@ export const entradaVotoSchema = z.object({
   // Honeypot: campo invisível; humanos nunca o preenchem.
   website: z.string().max(200).optional(),
 });
+
+// ---------------------------------------------------------------------
+// Auditoria de sala de aula (liderança de turma)
+// ---------------------------------------------------------------------
+export const auditoriaSchema = z.object({
+  // turma_docente é opcional ("" = geral); a turma NUNCA vem do formulário.
+  turmaDocenteId: z
+    .string()
+    .optional()
+    .transform((v) => (v === undefined || v === "" ? null : Number(v)))
+    .pipe(z.number().int().positive().nullable()),
+  categoria: z.enum(["DIDATICA", "AVALIACAO", "ASSIDUIDADE", "INFRAESTRUTURA", "CONDUTA", "OUTRO"], "Selecione a categoria."),
+  gravidade: z.enum(["BAIXA", "MEDIA", "ALTA", "CRITICA"], "Selecione a gravidade."),
+  titulo: texto(140),
+  descricao: z
+    .string()
+    .transform((s) => s.replace(/<[^>]*>/g, "").trim())
+    .pipe(z.string().min(20, "Descreva o facto com pelo menos 20 caracteres.").max(4000, "Máximo 4000 caracteres.")),
+});
