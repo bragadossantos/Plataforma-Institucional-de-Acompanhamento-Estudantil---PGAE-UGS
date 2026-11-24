@@ -2,11 +2,12 @@
 // Uso: npm run db:migrate   (lê DATABASE_URL de .env.local)
 import { readFileSync } from "node:fs";
 import postgres from "postgres";
+import { sslFor } from "../lib/db-ssl.ts";
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL não definida.");
 
-const sql = postgres(url, { ssl: "require", max: 1 });
+const sql = postgres(url, { ssl: sslFor(url), max: 1 });
 
 try {
   const [{ existe }] = await sql`SELECT to_regclass('public.utilizadores') IS NOT NULL AS existe`;
