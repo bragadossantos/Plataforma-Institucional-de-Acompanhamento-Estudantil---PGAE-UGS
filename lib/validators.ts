@@ -103,3 +103,13 @@ export const cicloSchema = z.object({
   inicio: dataISO,
   fim: dataISO,
 });
+
+// ---------------------------------------------------------------------
+// Votação anónima (pública)
+// ---------------------------------------------------------------------
+export const entradaVotoSchema = z.object({
+  codigo: z.string().trim().min(4, "Indique o código da turma.").max(16, "Código inválido."),
+  numero: z.string().trim().min(3, "Indique o seu número de estudante.").max(40, "Número inválido."),
+  // Honeypot: campo invisível; humanos nunca o preenchem.
+  website: z.string().max(200).optional(),
+});

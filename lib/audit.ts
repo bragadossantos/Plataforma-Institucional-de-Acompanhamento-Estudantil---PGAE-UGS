@@ -14,7 +14,7 @@ export type AuditEntry = {
 };
 
 /** SHA-256(IP + IP_SALT). O IP em claro nunca é guardado. */
-async function ipHash(): Promise<string | null> {
+export async function ipHash(): Promise<string | null> {
   const salt = process.env.IP_SALT;
   if (!salt) return null;
   const h = await headers();

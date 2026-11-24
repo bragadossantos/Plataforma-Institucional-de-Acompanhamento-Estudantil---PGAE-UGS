@@ -1,12 +1,19 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useTransition } from "react";
 import { loginAction, type LoginState } from "./actions";
 
 export function LoginForm() {
   const [state, action, pending] = useActionState<LoginState, FormData>(loginAction, {});
+  const [, startTransition] = useTransition();
+  // Envio por onSubmit: o React não limpa os campos depois de um erro (o utilizador não perde o que escreveu).
+  function enviar(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const dados = new FormData(e.currentTarget);
+    startTransition(() => action(dados));
+  }
   return (
-    <form action={action} className="flex flex-col gap-4" noValidate>
+    <form onSubmit={enviar} className="flex flex-col gap-4" noValidate>
       <div>
         <label htmlFor="identificador" className="text-sm font-semibold">
           E-mail institucional ou n.º de funcionário
