@@ -320,6 +320,30 @@ try {
   check("T5: com 1 voto o docente mostra o aviso de amostra insuficiente", dash.includes("Amostra insuficiente para preservação do anonimato (< 5 votos)"));
   check("T5: nenhuma classificação nem média de um grupo com < 5 votos", !dash.includes("Docente Destaque") && !dash.includes("Alerta Pedagógico"));
   check("o alerta crítico da ocorrência do delegado aparece no painel", dash.includes("Projetor da sala 12 avariado"));
+  // ------------------------------------------------------------------ Exportações
+  console.log("\nExportações");
+  const [{ cid }] = await sql`SELECT id AS cid FROM ciclos_avaliacao LIMIT 1`;
+  const csvR = await gae.request.get(`${base}/api/export/csv?ciclo=${cid}`);
+  const csv = await csvR.text();
+  check("CSV: 200, text/csv e BOM UTF-8", csvR.status() === 200 && (csvR.headers()["content-type"] ?? "").includes("text/csv") && csv.startsWith("﻿"));
+  check("CSV: grupo com 1 voto sem médias (amostra insuficiente)", csv.includes("Amostra insuficiente"));
+  check("CSV: sem comentários, descrições nem identificadores", !["Projetor da sala 12", "três aulas", "UGS20240001", "Delegado E2E"].some((x) => csv.includes(x)));
+  const pdfR = await gae.request.get(`${base}/api/export/pdf?ciclo=${cid}`);
+  const pdf = await pdfR.body();
+  check("PDF: 200, application/pdf e assinatura %PDF", pdfR.status() === 200 && (pdfR.headers()["content-type"] ?? "").includes("application/pdf") && pdf.subarray(0, 5).toString() === "%PDF-", `${pdf.length} bytes`);
+  const [{ ex }] = await sql`SELECT COUNT(*)::int AS ex FROM audit_logs WHERE acao IN ('EXPORTAR_CSV', 'EXPORTAR_PDF_DIRECAO')`;
+  check("cada exportação ficou registada em audit_logs", ex === 2, String(ex));
+  check("exportação sem ciclo devolve 400", (await gae.request.get(`${base}/api/export/csv`)).status() === 400);
+
+  await gae.goto(`${base}/gae`);
+  const [descarga] = await Promise.all([gae.waitForEvent("download"), gae.click("text=Exportar Relatório para a Direção (PDF)")]);
+  check("botão do dashboard descarrega o PDF", descarga.suggestedFilename().startsWith("pgae-relatorio-direcao-") && descarga.suggestedFilename().endsWith(".pdf"));
+
+  const obsCsv = await op.request.get(`${base}/api/export/csv?ciclo=${cid}`);
+  const obsPdf = await op.request.get(`${base}/api/export/pdf?ciclo=${cid}`);
+  check("T6: observador não exporta CSV nem PDF (403)", obsCsv.status() === 403 && obsPdf.status() === 403);
+  const anon = await browser.newContext();
+  check("sem sessão a exportação devolve 401", (await anon.request.get(`${base}/api/export/pdf?ciclo=${cid}`)).status() === 401);
 } catch (e) {
   check("execução sem exceções", false, String(e).split("\n")[0]);
   console.error(e);
