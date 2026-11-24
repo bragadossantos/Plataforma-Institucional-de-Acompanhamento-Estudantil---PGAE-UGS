@@ -41,19 +41,29 @@ feat/nome-em-kebab-case ──PR──▶ develop ──PR (verificada)──▶
 - **Nunca** se abre PR diretamente para `main` a partir de uma branch de trabalho: tudo entra por `develop`.
 - Detalhes completos em [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Começar (a partir da Fase 1)
+## Desenvolvimento local
+
+Requisitos: Node.js 24+.
 
 ```bash
 git clone https://github.com/bragadossantos/Plataforma-Institucional-de-Acompanhamento-Estudantil---PGAE-UGS.git
 cd Plataforma-Institucional-de-Acompanhamento-Estudantil---PGAE-UGS
 git switch develop
+npm install
+cp .env.example .env.local      # preencher (ver abaixo)
+npm run db:local                # terminal 1: PostgreSQL local (PGlite), dados em .pglite/
+npm run db:seed                 # terminal 2: cria o GAE_ADMIN e o FENT_OBSERVER iniciais
+npm run dev                     # terminal 2: http://localhost:3000
+npm test                        # testes (esquema, auth, RBAC)
 ```
 
-As instruções de instalação, variáveis de ambiente (`DATABASE_URL`, `SESSION_SECRET`, `VOTE_PEPPER`, `IP_SALT`) e scripts serão adicionadas na Fase 1, quando o código existir.
+Variáveis em `.env.local` (nunca fazer commit): `DATABASE_URL`, `SESSION_SECRET` (≥ 32 caracteres, ex.: `openssl rand -hex 32`), `VOTE_PEPPER`, `IP_SALT` e as `SEED_*` (só para o seed). Para uma base Neon, usar a `DATABASE_URL` do Neon e `npm run db:migrate` em vez de `db:local`.
+
+O primeiro acesso de cada utilizador obriga a trocar a palavra-passe provisória.
 
 ## Estado atual
 
-Fase 0 (Fundação): repositório, governança e documentação. Ver [Roadmap](docs/ROADMAP.md).
+Fase 1 em curso: esquema da base de dados, autenticação e RBAC; a seguir, estrutura académica e utilizadores. Ver [Roadmap](docs/ROADMAP.md).
 
 ## Licença
 

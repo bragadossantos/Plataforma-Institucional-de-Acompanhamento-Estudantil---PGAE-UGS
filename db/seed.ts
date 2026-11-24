@@ -2,6 +2,7 @@
 // Uso: npm run db:seed   (lê DATABASE_URL e credenciais de .env.local)
 // As credenciais NUNCA ficam no código: vêm de variáveis de ambiente.
 import postgres from "postgres";
+import { sslFor } from "../lib/db-ssl.ts";
 import { hashPassword } from "../lib/password.ts";
 
 function required(name: string): string {
@@ -26,7 +27,7 @@ for (const p of [adminPass, obsPass]) {
   if (!strongEnough(p)) throw new Error("Palavras-passe iniciais: mínimo 8 caracteres com letras e números.");
 }
 
-const sql = postgres(url, { ssl: "require", max: 1 });
+const sql = postgres(url, { ssl: sslFor(url), max: 1 });
 
 try {
   await sql.begin(async (tx) => {
