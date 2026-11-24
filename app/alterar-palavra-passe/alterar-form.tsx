@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useTransition } from "react";
 import { alterarPasswordAction, type AlterarState } from "./actions";
 
 function Campo({ id, label, erro, autoComplete }: { id: string; label: string; erro?: string; autoComplete: string }) {
@@ -30,9 +30,16 @@ function Campo({ id, label, erro, autoComplete }: { id: string; label: string; e
 
 export function AlterarForm() {
   const [state, action, pending] = useActionState<AlterarState, FormData>(alterarPasswordAction, {});
+  const [, startTransition] = useTransition();
+  // Envio por onSubmit: o React não limpa os campos depois de um erro (o utilizador não perde o que escreveu).
+  function enviar(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const dados = new FormData(e.currentTarget);
+    startTransition(() => action(dados));
+  }
   const e = state.erros ?? {};
   return (
-    <form action={action} className="flex flex-col gap-4" noValidate>
+    <form onSubmit={enviar} className="flex flex-col gap-4" noValidate>
       <Campo id="atual" label="Palavra-passe atual" erro={e.atual} autoComplete="current-password" />
       <Campo id="nova" label="Nova palavra-passe (mín. 8, letras e números)" erro={e.nova} autoComplete="new-password" />
       <Campo id="confirmar" label="Confirmar nova palavra-passe" erro={e.confirmar} autoComplete="new-password" />
