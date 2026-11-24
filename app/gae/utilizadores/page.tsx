@@ -15,7 +15,7 @@ const PERFIS = [
   { valor: "DELEGADO", texto: "Delegado" },
   { valor: "SUBDELEGADO", texto: "Subdelegado" },
   { valor: "SECRETARIO", texto: "Secretário" },
-  { valor: "FENT_OBSERVER", texto: "Observador FENT Fest" },
+  { valor: "FENT_OBSERVER", texto: "Observador" },
 ];
 const PERFIL_LABEL = Object.fromEntries(PERFIS.map((p) => [p.valor, p.texto]));
 const td = "px-4 py-2 align-top";

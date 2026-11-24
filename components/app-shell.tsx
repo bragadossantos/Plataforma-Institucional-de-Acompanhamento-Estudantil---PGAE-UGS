@@ -9,7 +9,7 @@ const ROLE_LABEL: Record<Role, string> = {
   DELEGADO: "Delegado",
   SUBDELEGADO: "Subdelegado",
   SECRETARIO: "Secretário",
-  FENT_OBSERVER: "Observador FENT Fest",
+  FENT_OBSERVER: "Observador",
 };
 
 export function AppShell({

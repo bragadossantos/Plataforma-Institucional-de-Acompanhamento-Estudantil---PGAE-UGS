@@ -264,6 +264,28 @@ try {
   await gae.goto(`${base}/gae/auditorias`);
   check("a ocorrência aparece de imediato na fila do GAE", (await gae.textContent("main")).includes("Projetor da sala 12 avariado"));
 
+  // ------------------------------------------------------------------ Triagem (GAE)
+  console.log("\nTriagem de ocorrências");
+  await gae.goto(`${base}/gae/auditorias`);
+  await gae.selectOption("select[name=estado]", "EM_ANALISE");
+  await gae.fill("input[name=parecer]", "A tratar com a administração");
+  await gae.click("button:has-text('Guardar estado')");
+  await gae.waitForSelector("text=Estado atualizado");
+  const [e1] = await sql`SELECT estado, parecer_gae FROM auditorias_sala`;
+  check("GAE passa a ocorrência a Em análise com parecer", e1.estado === "EM_ANALISE" && e1.parecer_gae.includes("administração"));
+
+  await gae.check("input[name=ativo]");
+  await gae.fill("input[name=resumo]", "Projetor de uma sala avariado durante semanas");
+  await gae.click("button:text-is('Guardar')");
+  await gae.waitForSelector("text=Enviado para o Banco de Desafios");
+  const [e2] = await sql`SELECT elegivel_fentfest FROM auditorias_sala`;
+  check("GAE envia a ocorrência para o Banco de Desafios", e2.elegivel_fentfest === true);
+
+  await gae.fill("input[name=resumo]", "Queixa do delegado sobre um projetor");
+  await gae.click("button:text-is('Guardar')");
+  await gae.waitForSelector("form [role=alert]:has-text('nome próprio')");
+  check("resumo com o nome de quem registou é recusado", true);
+
   // ------------------------------------------------------------------ Dashboard BI (T5)
   console.log("\nDashboard de BI");
   await gae.goto(`${base}/gae`);
