@@ -2,13 +2,13 @@
 
 Derivado da [Especificação Arquitetural](ESPECIFICACAO-ARQUITETURAL.md) (secções 7 e 8). Cada fase termina com **PR `develop` → `main`**, **tag**, **GitHub Release** e deploy, conforme o [Guia de Contribuição](../CONTRIBUTING.md).
 
-| Fase | Versão | Nome | Duração prevista |
-| :---: | :---: | :--- | :--- |
-| 0 | `v0.1.0` | Fundação e governança | — |
-| 1 | `v0.2.0` | Base de dados, autenticação e estrutura académica | Dia 1 (6–8 h) |
-| 2 | `v0.3.0` | Votação anónima e auditoria do Delegado | Dia 2 (6–8 h) |
-| 3 | `v0.4.0` | BI, relatórios e painel de desafios | Dia 3 (6–8 h) |
-| 4 | `v1.0.0` | Segurança, UX mobile e produção | Dia 4 (4–6 h) |
+| Fase | Versão | Nome | Duração prevista | Estado |
+| :---: | :---: | :--- | :--- | :--- |
+| 0 | `v0.1.0` | Fundação e governança | — | Concluída |
+| 1 | `v0.2.0` | Base de dados, autenticação e estrutura académica | Dia 1 (6–8 h) | Concluída |
+| 2 | `v0.3.0` | Votação anónima e auditoria do Delegado | Dia 2 (6–8 h) | Concluída |
+| 3 | `v0.4.0` | BI, relatórios e painel de desafios | Dia 3 (6–8 h) | Concluída |
+| 4 | `v1.0.0` | Segurança, UX mobile e produção | Dia 4 (4–6 h) | Código e documentação prontos; falta deploy |
 
 ---
 
@@ -70,8 +70,11 @@ Branches sugeridas: `test/bateria-seguranca-t1-t8`, `style/polimento-mobile`, `c
 
 ---
 
+Todas as fases estão fundidas na `develop`; ainda não houve release para a `main` (sem tags). Ver [CHANGELOG](../CHANGELOG.md).
+
 ## Pontos em aberto
 
-- Domínio/URL final na Vercel.
+- Deploy: contas Neon e Vercel, domínio/URL final (ver [DEPLOY.md](DEPLOY.md)).
+- Lista de alunos para validar a pertença à turma (limitação da especificação v1.0).
 - Logótipos oficiais da UGS/GAE (ver [Proposta Visual](PROPOSTA-VISUAL.md)).
 - Região e plano do Neon; política de retenção de dados (Lei n.º 22/11).
