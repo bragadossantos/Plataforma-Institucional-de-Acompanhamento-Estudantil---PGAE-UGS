@@ -55,6 +55,8 @@ await sql`INSERT INTO utilizadores (nome_completo, identificador, password_hash,
 const adm = await sql`SELECT id FROM utilizadores WHERE identificador = 'admin.e2e@ugs.local'`;
 const del = await criarUtilizador(sql, { nome: "Delegado E2E", identificador: "delegado.e2e@ugs.local", role: "DELEGADO", turmaId: t.id }, adm[0].id);
 
+const obs = await criarUtilizador(sql, { nome: "Observador E2E", identificador: "observador.e2e@ugs.local", role: "FENT_OBSERVER", turmaId: null }, adm[0].id);
+
 // 2) Servidor Next próprio
 const web = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "-p", String(portaWeb), "-H", "127.0.0.1"], {
   env: {
@@ -285,6 +287,30 @@ try {
   await gae.click("button:text-is('Guardar')");
   await gae.waitForSelector("form [role=alert]:has-text('nome próprio')");
   check("resumo com o nome de quem registou é recusado", true);
+
+  // ------------------------------------------------------------------ Observador
+  console.log("\nObservador");
+  const op = await (await browser.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
+  op.setDefaultTimeout(45000);
+  await op.goto(`${base}/login`);
+  await op.fill("#identificador", "observador.e2e@ugs.local");
+  await op.fill("#password", obs.senha);
+  await op.click("button:has-text('Entrar')");
+  await op.waitForURL("**/alterar-palavra-passe");
+  await op.fill("#atual", obs.senha);
+  await op.fill("#nova", "Observador12345");
+  await op.fill("#confirmar", "Observador12345");
+  await op.click("button:has-text('Guardar')");
+  await op.waitForURL("**/insights");
+  check("observador aterra em /insights", true);
+  const ins = await op.textContent("body");
+  check("vê o problema aprovado e o aviso de anonimização", ins.includes("Projetor de uma sala avariado durante semanas") && ins.includes("Dados anonimizados e aprovados pelo GAE"));
+  check("não vê título, descrição, turma nem nomes da ocorrência", !["Projetor da sala 12 avariado", "três aulas foram afetadas", "Delegado E2E", "Admin E2E", "EI3A"].some((x) => ins.includes(x)));
+  check("menu do observador só tem Desafios", (await op.locator("nav[aria-label=Principal] a").allTextContents()).join() === "Desafios");
+  for (const rota of ["/gae", "/gae/ciclos", "/gae/utilizadores", "/gae/auditorias", "/delegado"]) {
+    await op.goto(`${base}${rota}`);
+    check(`T6: observador em ${rota} recebe 403`, (await op.textContent("body")).includes("Acesso negado"));
+  }
 
   // ------------------------------------------------------------------ Dashboard BI (T5)
   console.log("\nDashboard de BI");
