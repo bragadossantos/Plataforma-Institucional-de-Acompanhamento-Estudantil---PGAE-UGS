@@ -56,6 +56,7 @@ npm install
 cp .env.example .env.local      # preencher (ver abaixo)
 npm run db:local                # terminal 1: PostgreSQL local (PGlite), dados em .pglite/
 npm run db:seed                 # terminal 2: cria o GAE_ADMIN e o FENT_OBSERVER iniciais
+npm run db:demo                 # opcional: contas e dados de demonstração (só base local; palavra-passe Demo12345)
 npm run dev                     # terminal 2: http://localhost:3000
 npm test                        # testes de regras e base de dados
 npm run e2e                     # testes no browser (precisa do Edge ou Chrome)
