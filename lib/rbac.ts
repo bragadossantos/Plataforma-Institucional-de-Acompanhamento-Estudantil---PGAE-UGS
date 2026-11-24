@@ -41,7 +41,7 @@ export function navFor(role: Role): NavItem[] {
         { label: "Utilizadores", href: "/gae/utilizadores", ready: true },
         { label: "Ciclos", href: "/gae/ciclos", ready: true },
         { label: "Auditorias", href: "/gae/auditorias", ready: true },
-        { label: "Relatórios", href: "/gae/relatorios", ready: false },
+        { label: "Relatórios", href: "/gae/relatorios", ready: true },
         { label: "Desafios", href: "/insights", ready: true },
       ];
     case "GAE_ANALISTA":
@@ -49,7 +49,7 @@ export function navFor(role: Role): NavItem[] {
         { label: "Painel", href: "/gae", ready: true },
         { label: "Ciclos", href: "/gae/ciclos", ready: true },
         { label: "Auditorias", href: "/gae/auditorias", ready: true },
-        { label: "Relatórios", href: "/gae/relatorios", ready: false },
+        { label: "Relatórios", href: "/gae/relatorios", ready: true },
         { label: "Desafios", href: "/insights", ready: true },
       ];
     case "FENT_OBSERVER":

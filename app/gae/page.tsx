@@ -47,11 +47,23 @@ export default async function GaePage({ searchParams }: { searchParams: Promise<
   const ranking = await rankingDocentes(sql, filtros);
   const [kpis, alertas] = await Promise.all([calcularKpis(sql, filtros, ranking), alertasCriticosAbertos(sql, filtros)]);
 
+  const qs = new URLSearchParams({ ciclo: String(cicloId) });
+  for (const k of ["faculdade", "curso", "turma"] as const) if (num(q[k])) qs.set(k, String(num(q[k])));
+
   const destaque = ranking.filter((r) => r.classe === "DESTAQUE").slice(0, 5);
   const alertaPedagogico = ranking.filter((r) => r.classe === "ALERTA");
 
   return (
     <AppShell user={user} current="/gae" title="Painel GAE">
+      <div className="mb-4 flex justify-end">
+        <a
+          href={`/api/export/pdf?${qs}`}
+          className="flex min-h-11 items-center rounded-control bg-accent px-4 font-semibold text-white"
+        >
+          Exportar Relatório para a Direção (PDF)
+        </a>
+      </div>
+
       <section aria-label="Indicadores" className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Kpi label="Taxa de adesão global" valor={`${fmt(kpis.adesaoGlobal, 0)} %`} nota={`${kpis.votosUnicos} de ${kpis.alunosEstimados} alunos estimados`} />
         <Kpi label="Média pedagógica UGS" valor={fmt(kpis.mediaPedagogica)} nota="IDD ponderado, só grupos com ≥ 5 votos" />
