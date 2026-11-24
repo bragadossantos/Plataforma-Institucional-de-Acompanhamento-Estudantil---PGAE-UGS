@@ -10,6 +10,8 @@ export const ROLES = [
 export type Role = (typeof ROLES)[number];
 
 export const GAE_ROLES: readonly Role[] = ["GAE_ADMIN", "GAE_ANALISTA"];
+/** Quem pode consultar o Banco de Desafios (matriz RBAC, secção 4.2). */
+export const INSIGHTS_ROLES: readonly Role[] = ["FENT_OBSERVER", "GAE_ADMIN", "GAE_ANALISTA"];
 export const LIDERANCA_ROLES: readonly Role[] = ["DELEGADO", "SUBDELEGADO", "SECRETARIO"];
 
 export function isRole(value: unknown): value is Role {
@@ -40,6 +42,7 @@ export function navFor(role: Role): NavItem[] {
         { label: "Ciclos", href: "/gae/ciclos", ready: true },
         { label: "Auditorias", href: "/gae/auditorias", ready: true },
         { label: "Relatórios", href: "/gae/relatorios", ready: false },
+        { label: "Desafios", href: "/insights", ready: true },
       ];
     case "GAE_ANALISTA":
       return [
@@ -47,6 +50,7 @@ export function navFor(role: Role): NavItem[] {
         { label: "Ciclos", href: "/gae/ciclos", ready: true },
         { label: "Auditorias", href: "/gae/auditorias", ready: true },
         { label: "Relatórios", href: "/gae/relatorios", ready: false },
+        { label: "Desafios", href: "/insights", ready: true },
       ];
     case "FENT_OBSERVER":
       return [{ label: "Desafios", href: "/insights", ready: true }];
