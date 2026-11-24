@@ -294,12 +294,13 @@ try {
   check("painel mostra o código da turma", painel.includes(CODIGO));
   check("painel mostra a adesão (1 de 40 alunos)", painel.includes("1 de 40 alunos"), (painel.match(/d+ de d+ alunos/) ?? [""])[0]);
 
-  await dp.goto(`${base}/gae`);
-  check("T1: delegado em /gae recebe 403", (await dp.textContent("body")).includes("Acesso negado"));
+  const r403 = await dp.goto(`${base}/gae`);
+  check("T1: delegado em /gae recebe HTTP 403 e a página de acesso negado", r403.status() === 403 && (await dp.innerText("body")).includes("Acesso negado"), `HTTP ${r403.status()}`);
   const [{ neg }] = await sql`SELECT COUNT(*)::int AS neg FROM audit_logs WHERE acao = 'ACESSO_NEGADO' AND actor_role = 'DELEGADO'`;
   check("T1: a tentativa ficou registada em audit_logs", neg >= 1, String(neg));
 
-  await dp.goto(`${base}/delegado/auditoria`);
+  const rOk = await dp.goto(`${base}/delegado/auditoria`);
+  check("controlo: página permitida devolve 200 e não mostra \"Acesso negado\"", rOk.status() === 200 && !(await dp.innerText("body")).includes("Acesso negado"));
   await dp.selectOption("#categoria", "INFRAESTRUTURA");
   await dp.click("label:has(input[value=CRITICA])");
   await dp.fill("#titulo", "Projetor da sala 12 avariado");
@@ -356,8 +357,8 @@ try {
   check("não vê título, descrição, turma nem nomes da ocorrência", !["Projetor da sala 12 avariado", "três aulas foram afetadas", "Delegado E2E", "Admin E2E", "EI3A"].some((x) => ins.includes(x)));
   check("menu do observador só tem Desafios", (await op.locator("nav[aria-label=Principal] a").allTextContents()).join() === "Desafios");
   for (const rota of ["/gae", "/gae/ciclos", "/gae/utilizadores", "/gae/auditorias", "/delegado"]) {
-    await op.goto(`${base}${rota}`);
-    check(`T6: observador em ${rota} recebe 403`, (await op.textContent("body")).includes("Acesso negado"));
+    const resp = await op.goto(`${base}${rota}`);
+    check(`T6: observador em ${rota} recebe HTTP 403`, resp.status() === 403 && (await op.innerText("body")).includes("Acesso negado"), `HTTP ${resp.status()}`);
   }
 
   // ------------------------------------------------------------------ Dashboard BI (T5)
