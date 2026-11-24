@@ -38,14 +38,14 @@ export function navFor(role: Role): NavItem[] {
         { label: "Estrutura", href: "/gae/estrutura", ready: true },
         { label: "Utilizadores", href: "/gae/utilizadores", ready: true },
         { label: "Ciclos", href: "/gae/ciclos", ready: true },
-        { label: "Auditorias", href: "/gae/auditorias", ready: false },
+        { label: "Auditorias", href: "/gae/auditorias", ready: true },
         { label: "Relatórios", href: "/gae/relatorios", ready: false },
       ];
     case "GAE_ANALISTA":
       return [
         { label: "Painel", href: "/gae", ready: true },
         { label: "Ciclos", href: "/gae/ciclos", ready: true },
-        { label: "Auditorias", href: "/gae/auditorias", ready: false },
+        { label: "Auditorias", href: "/gae/auditorias", ready: true },
         { label: "Relatórios", href: "/gae/relatorios", ready: false },
       ];
     case "FENT_OBSERVER":
@@ -53,7 +53,7 @@ export function navFor(role: Role): NavItem[] {
     default:
       return [
         { label: "Painel da turma", href: "/delegado", ready: true },
-        { label: "Auditoria de sala", href: "/delegado/auditoria", ready: false },
+        { label: "Auditoria de sala", href: "/delegado/auditoria", ready: true },
       ];
   }
 }

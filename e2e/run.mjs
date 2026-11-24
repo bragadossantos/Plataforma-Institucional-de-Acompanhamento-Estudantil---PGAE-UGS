@@ -9,6 +9,7 @@ import postgres from "postgres";
 import { PGlite } from "@electric-sql/pglite";
 import { PGLiteSocketServer } from "@electric-sql/pglite-socket";
 import { hashPassword } from "../lib/password.ts";
+import { criarUtilizador } from "../lib/utilizadores-core.ts";
 import { associarDocente, criarCurso, criarDocente, criarFaculdade, criarTurma } from "../lib/estrutura-core.ts";
 
 const resultados = [];
@@ -50,6 +51,9 @@ for (const [n, disc] of [["Docente Um", "Algoritmos"], ["Docente Dois", "Redes"]
 }
 await sql`INSERT INTO utilizadores (nome_completo, identificador, password_hash, role)
           VALUES ('Admin E2E', 'admin.e2e@ugs.local', ${await hashPassword("Provisoria123")}, 'GAE_ADMIN')`;
+
+const adm = await sql`SELECT id FROM utilizadores WHERE identificador = 'admin.e2e@ugs.local'`;
+const del = await criarUtilizador(sql, { nome: "Delegado E2E", identificador: "delegado.e2e@ugs.local", role: "DELEGADO", turmaId: t.id }, adm[0].id);
 
 // 2) Servidor Next próprio
 const web = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "-p", String(portaWeb), "-H", "127.0.0.1"], {
@@ -219,6 +223,46 @@ try {
   await rl.click("button:has-text('Continuar')");
   await rl.waitForSelector("form [role=alert]");
   check("5 códigos errados bloqueiam o IP, mesmo com o código certo", (await rl.textContent("form [role=alert]")).includes("Demasiadas tentativas"));
+
+  // ------------------------------------------------------------------ Delegado (desktop)
+  console.log("\nDelegado");
+  const dp = await (await browser.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
+  dp.setDefaultTimeout(45000);
+  await dp.goto(`${base}/login`);
+  await dp.fill("#identificador", "delegado.e2e@ugs.local");
+  await dp.fill("#password", del.senha);
+  await dp.click("button:has-text('Entrar')");
+  await dp.waitForURL("**/alterar-palavra-passe");
+  await dp.fill("#atual", del.senha);
+  await dp.fill("#nova", "Delegado12345");
+  await dp.fill("#confirmar", "Delegado12345");
+  await dp.click("button:has-text('Guardar')");
+  await dp.waitForURL("**/delegado");
+  check("delegado entra com a palavra-passe provisória e aterra no painel da turma", true);
+
+  const painel = await dp.textContent("main");
+  check("painel mostra o código da turma", painel.includes(CODIGO));
+  check("painel mostra a adesão (1 de 40 alunos)", painel.includes("1 de 40 alunos"), (painel.match(/d+ de d+ alunos/) ?? [""])[0]);
+
+  await dp.goto(`${base}/gae`);
+  check("T1: delegado em /gae recebe 403", (await dp.textContent("body")).includes("Acesso negado"));
+  const [{ neg }] = await sql`SELECT COUNT(*)::int AS neg FROM audit_logs WHERE acao = 'ACESSO_NEGADO' AND actor_role = 'DELEGADO'`;
+  check("T1: a tentativa ficou registada em audit_logs", neg >= 1, String(neg));
+
+  await dp.goto(`${base}/delegado/auditoria`);
+  await dp.selectOption("#categoria", "INFRAESTRUTURA");
+  await dp.click("label:has(input[value=CRITICA])");
+  await dp.fill("#titulo", "Projetor da sala 12 avariado");
+  await dp.fill("#descricao", "O projetor da sala 12 não liga desde segunda-feira e três aulas foram afetadas.");
+  await dp.click("button:has-text('Enviar ao GAE')");
+  await dp.waitForSelector("text=Ocorrência registada e enviada ao GAE");
+  check("delegado regista uma ocorrência crítica", true);
+
+  const [aud] = await sql`SELECT turma_id, estado FROM auditorias_sala`;
+  check("a ocorrência ficou com a turma da sessão e estado NOVO", aud.turma_id === t.id && aud.estado === "NOVO");
+
+  await gae.goto(`${base}/gae/auditorias`);
+  check("a ocorrência aparece de imediato na fila do GAE", (await gae.textContent("main")).includes("Projetor da sala 12 avariado"));
 } catch (e) {
   check("execução sem exceções", false, String(e).split("\n")[0]);
   console.error(e);
