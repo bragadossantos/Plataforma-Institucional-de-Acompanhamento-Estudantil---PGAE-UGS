@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/* Tokens do design system PGAE — ver docs/PROPOSTA-VISUAL.md */
+:root {
+  --bg: #f4f2ec;
+  --surface: #fbfaf6;
+  --border: #dcd8cc;
+  --ink: #10162b;
+  --ink-2: #1a2240;
+  --ink-muted: #5b6178;
+  --brand: #004aad;
+  --accent: #c2410c;
+  --accent-on-dark: #ff6b35;
+  --ok: #15803d;
+  --ok-bg: #dcfce7;
+  --warn: #b45309;
+  --warn-bg: #fef3c7;
+  --crit: #b91c1c;
+  --crit-bg: #fee2e2;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-muted: var(--ink-muted);
+  --color-brand: var(--brand);
+  --color-accent: var(--accent);
+  --color-accent-on-dark: var(--accent-on-dark);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-crit: var(--crit);
+  --color-crit-bg: var(--crit-bg);
+  --font-display: var(--font-space-grotesk), system-ui, sans-serif;
+  --font-sans: var(--font-plex-sans), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --radius-card: 12px;
+  --radius-control: 10px;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
