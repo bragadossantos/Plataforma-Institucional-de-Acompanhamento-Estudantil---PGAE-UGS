@@ -37,14 +37,14 @@ export function navFor(role: Role): NavItem[] {
         { label: "Painel", href: "/gae", ready: true },
         { label: "Estrutura", href: "/gae/estrutura", ready: true },
         { label: "Utilizadores", href: "/gae/utilizadores", ready: true },
-        { label: "Ciclos", href: "/gae/ciclos", ready: false },
+        { label: "Ciclos", href: "/gae/ciclos", ready: true },
         { label: "Auditorias", href: "/gae/auditorias", ready: false },
         { label: "Relatórios", href: "/gae/relatorios", ready: false },
       ];
     case "GAE_ANALISTA":
       return [
         { label: "Painel", href: "/gae", ready: true },
-        { label: "Ciclos", href: "/gae/ciclos", ready: false },
+        { label: "Ciclos", href: "/gae/ciclos", ready: true },
         { label: "Auditorias", href: "/gae/auditorias", ready: false },
         { label: "Relatórios", href: "/gae/relatorios", ready: false },
       ];
