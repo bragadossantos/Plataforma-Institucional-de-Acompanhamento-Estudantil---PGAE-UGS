@@ -1,10 +1,12 @@
 "use client";
 
+import { useHidratado } from "@/components/use-hidratado";
 import { useActionState, useTransition } from "react";
 import { loginAction, type LoginState } from "./actions";
 
 export function LoginForm() {
   const [state, action, pending] = useActionState<LoginState, FormData>(loginAction, {});
+  const hidratado = useHidratado();
   const [, startTransition] = useTransition();
   // Envio por onSubmit: o React não limpa os campos depois de um erro (o utilizador não perde o que escreveu).
   function enviar(e: React.FormEvent<HTMLFormElement>) {
@@ -13,7 +15,7 @@ export function LoginForm() {
     startTransition(() => action(dados));
   }
   return (
-    <form onSubmit={enviar} className="flex flex-col gap-4" noValidate>
+    <form method="post" onSubmit={enviar} className="flex flex-col gap-4" noValidate>
       <div>
         <label htmlFor="identificador" className="text-sm font-semibold">
           E-mail institucional ou n.º de funcionário
@@ -46,7 +48,7 @@ export function LoginForm() {
         </p>
       )}
       <button
-        disabled={pending}
+        disabled={pending || !hidratado}
         className="min-h-11 rounded-control bg-accent px-4 font-semibold text-white disabled:opacity-60"
       >
         {pending ? "A entrar…" : "Entrar"}

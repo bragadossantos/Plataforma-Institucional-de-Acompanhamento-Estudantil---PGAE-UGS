@@ -5,6 +5,7 @@ import { getSql } from "@/lib/db";
 import { VOTO_COOKIE } from "@/lib/vote-cookie";
 import { verifyVoteToken } from "@/lib/vote-token";
 import { docentesDaTurma } from "@/lib/vote-core";
+import { Emblema } from "@/components/logo";
 import { VotoForm } from "./voto-form";
 
 export const metadata: Metadata = { title: "Avaliação anónima · PGAE" };
@@ -21,6 +22,10 @@ export default async function VotoPage({ params }: { params: Promise<{ cicloId: 
 
   return (
     <main className="mx-auto min-h-screen max-w-md px-4 py-6">
+      <div className="mb-4 flex items-center gap-2">
+        <Emblema tamanho={36} priority />
+        <span className="font-display text-sm font-medium tracking-wide text-ink-muted">PGAE · UGS</span>
+      </div>
       <VotoForm docentes={docentes.map((d) => ({ id: d.id, disciplina: d.disciplina, nome: d.nome }))} />
     </main>
   );

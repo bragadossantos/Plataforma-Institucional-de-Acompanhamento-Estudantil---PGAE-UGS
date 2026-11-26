@@ -1,5 +1,6 @@
 "use client";
 
+import { useHidratado } from "@/components/use-hidratado";
 import { useActionState, useRef, useState, useTransition } from "react";
 import { submeterVotoAction, type VotoState } from "../actions";
 
@@ -48,6 +49,7 @@ export function VotoForm({ docentes }: { docentes: Docente[] }) {
   const [aviso, setAviso] = useState<string | null>(null);
   const form = useRef<HTMLFormElement>(null);
   const [state, action, pending] = useActionState<VotoState, FormData>(submeterVotoAction, {});
+  const hidratado = useHidratado();
   const [, startTransition] = useTransition();
   // Envio por onSubmit: o React não limpa os campos depois de um erro (o utilizador não perde o que escreveu).
   function enviar(e: React.FormEvent<HTMLFormElement>) {
@@ -154,7 +156,7 @@ export function VotoForm({ docentes }: { docentes: Docente[] }) {
           </p>
         )}
         <button
-          disabled={pending}
+          disabled={pending || !hidratado}
           className="min-h-12 rounded-control bg-accent px-4 text-lg font-semibold text-white disabled:opacity-60"
         >
           {pending ? "A enviar…" : "Submeter Avaliação Anónima"}
