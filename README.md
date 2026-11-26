@@ -70,7 +70,7 @@ O primeiro acesso de cada utilizador obriga a trocar a palavra-passe provisória
 
 Fases 1 a 4 construídas e fundidas na `develop`: autenticação e RBAC, estrutura académica, votação anónima, painel do Delegado, dashboard de BI, triagem, Banco de Desafios, exportações PDF/CSV, cabeçalhos de segurança e guias. `npm test` (115 testes) e `npm run e2e` (69 verificações no browser) passam.
 
-**Falta:** deploy em produção (Neon e Vercel, ver [DEPLOY.md](docs/DEPLOY.md)) e o release na `main`. Ver [Roadmap](docs/ROADMAP.md).
+Versão atual: **`v1.0.0-rc.1`** (na `main`). **Falta:** deploy em produção (Neon e Vercel, ver [DEPLOY.md](docs/DEPLOY.md)) e a verificação em produção para passar a `v1.0.0`. Ver [Roadmap](docs/ROADMAP.md).
 
 ## Licença
 

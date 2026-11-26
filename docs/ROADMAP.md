@@ -8,7 +8,7 @@ Derivado da [Especificação Arquitetural](ESPECIFICACAO-ARQUITETURAL.md) (secç
 | 1 | `v0.2.0` | Base de dados, autenticação e estrutura académica | Dia 1 (6–8 h) | Concluída |
 | 2 | `v0.3.0` | Votação anónima e auditoria do Delegado | Dia 2 (6–8 h) | Concluída |
 | 3 | `v0.4.0` | BI, relatórios e painel de desafios | Dia 3 (6–8 h) | Concluída |
-| 4 | `v1.0.0` | Segurança, UX mobile e produção | Dia 4 (4–6 h) | Código e documentação prontos; falta deploy |
+| 4 | `v1.0.0` | Segurança, UX mobile e produção | Dia 4 (4–6 h) | Código pronto (`v1.0.0-rc.1`); falta deploy |
 
 ---
 
@@ -70,7 +70,7 @@ Branches sugeridas: `test/bateria-seguranca-t1-t8`, `style/polimento-mobile`, `c
 
 ---
 
-Todas as fases estão fundidas na `develop`; ainda não houve release para a `main` (sem tags). Ver [CHANGELOG](../CHANGELOG.md).
+Todas as fases estão na `main`. Tags: `v0.1.0` a `v0.4.0` (uma por fase) e `v1.0.0-rc.1`. Falta o deploy e a verificação em produção para passar a `v1.0.0`. Ver [CHANGELOG](../CHANGELOG.md).
 
 ## Pontos em aberto
 
