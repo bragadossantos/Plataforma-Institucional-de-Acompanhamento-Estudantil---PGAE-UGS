@@ -35,6 +35,6 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
-.pglite/
+.pglite*/
 .next-e2e/
 .next-build/
