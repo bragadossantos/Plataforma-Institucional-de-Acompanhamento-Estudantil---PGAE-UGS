@@ -2,7 +2,15 @@
 
 Segue [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-`v1.0.0-rc.1` é a primeira versão na `main`. É um *release candidate*: o código está completo e testado, mas o deploy (Neon e Vercel), os telemóveis reais e o Wi-Fi do campus ainda não foram verificados (ver [VALIDACAO-SEGURANCA.md](docs/VALIDACAO-SEGURANCA.md)). Passa a `v1.0.0` depois dessa verificação.
+`v1.0.0-rc.1` foi a primeira versão na `main`; a atual é a `v1.0.0-rc.2`. É um *release candidate*: o código está completo e testado, mas o deploy (Neon e Vercel), os telemóveis reais e o Wi-Fi do campus ainda não foram verificados (ver [VALIDACAO-SEGURANCA.md](docs/VALIDACAO-SEGURANCA.md)). Passa a `v1.0.0` depois dessa verificação.
+
+## [v1.0.0-rc.2] — 2026-11-26
+
+- Identidade visual da UGS: logótipo e emblema no login (logótipo em cima, descrição centrada), página inicial, menu lateral, votação, páginas de erro, ícones do browser e cabeçalho do PDF.
+- Removida a página interna `/design`.
+- Correção: os formulários já não podem ser submetidos antes de a página carregar o JavaScript (o browser submetia por GET e a palavra-passe do login podia ir para o endereço). Botões inativos até à hidratação e `method="post"` nos formulários com palavra-passe.
+- Primeiro deploy na Vercel + Neon, com contas demo de produção (palavra-passe provisória forte, troca obrigatória no 1.º acesso).
+- `npm run e2e`: 73 verificações; `npm run e2e:prod`: 76.
 
 ## [v1.0.0-rc.1] — 2026-11-26
 
