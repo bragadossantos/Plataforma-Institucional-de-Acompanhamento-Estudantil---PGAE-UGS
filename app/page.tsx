@@ -1,15 +1,20 @@
 import Link from "next/link";
+import { LogoCompleto } from "@/components/logo";
 
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 px-4 py-10">
-      <header>
-        <p className="font-display text-sm font-medium tracking-wide text-ink-muted">UGS · GAE</p>
-        <h1 className="font-display text-3xl font-bold">PGAE</h1>
-        <p className="mt-1 text-ink-muted">Plataforma Institucional de Acompanhamento Estudantil</p>
+    <main className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center gap-6 px-4 py-10 text-center">
+      <header className="flex flex-col items-center">
+        <LogoCompleto largura={200} priority />
+        <h1 className="mt-5 font-display text-3xl font-bold">PGAE</h1>
+        <p className="mt-1 font-semibold">Plataforma Institucional de Acompanhamento Estudantil</p>
+        <p className="mt-2 text-sm text-ink-muted">
+          Avaliação docente anónima, auditoria de sala de aula e acompanhamento académico, do Grupo de Acompanhamento
+          Estudantil (GAE).
+        </p>
       </header>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex w-full flex-col gap-3">
         <Link
           href="/votar"
           className="flex min-h-11 items-center justify-center rounded-control bg-accent px-4 font-semibold text-white"
@@ -23,14 +28,6 @@ export default function Home() {
           Entrar (GAE e liderança de turma)
         </Link>
       </div>
-
-      <p className="text-sm text-ink-muted">
-        Em construção · Fase 1. Veja o catálogo visual em{" "}
-        <Link href="/design" className="font-semibold text-brand underline">
-          /design
-        </Link>
-        .
-      </p>
     </main>
   );
 }

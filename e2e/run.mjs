@@ -134,7 +134,19 @@ try {
     check("sem 'unsafe-eval' em produção", !csp.includes("unsafe-eval"));
     check("upgrade-insecure-requests em produção", csp.includes("upgrade-insecure-requests"));
   }
+  // Antes de a página carregar o JavaScript, o login não pode submeter por GET (palavra-passe no endereço).
+  const semJs = await (await browser.newContext({ javaScriptEnabled: false })).newPage();
+  await semJs.goto(`${base}/login`);
+  await semJs.fill("#identificador", "alguem@ugs.local");
+  await semJs.fill("#password", "SegredoNaoPodeAparecer1");
+  const botaoInativo = await semJs.locator("form button").first().isDisabled();
+  await semJs.locator("form button").first().click({ force: true, timeout: 3000 }).catch(() => {});
+  await semJs.waitForTimeout(800);
+  check("login sem JavaScript: botão inativo e a palavra-passe nunca vai para o endereço", botaoInativo && !semJs.url().includes("password") && !semJs.url().includes("SegredoNaoPodeAparecer1"), semJs.url().slice(-40));
   check("robots.txt proíbe indexação", (await (await fetch(base + "/robots.txt")).text()).includes("Disallow: /"));
+  check("a página /design já não existe (404)", (await fetch(base + "/design")).status === 404);
+  const logoR = await fetch(base + "/brand/ugs-logo.png");
+  check("logótipo e emblema da UGS são servidos (PNG)", logoR.status === 200 && (logoR.headers.get("content-type") ?? "").includes("image/png") && (await fetch(base + "/brand/ugs-emblema.png")).status === 200);
   const nf = await fetch(base + "/nao-existe");
   const nft = await nf.text();
   check("404 amigável, sem stack trace", nf.status === 404 && nft.includes("Página não encontrada") && !/\bat \w+ \(/.test(nft));
@@ -295,6 +307,7 @@ try {
   check("painel mostra a adesão (1 de 40 alunos)", painel.includes("1 de 40 alunos"), (painel.match(/d+ de d+ alunos/) ?? [""])[0]);
 
   const r403 = await dp.goto(`${base}/gae`);
+  await dp.waitForSelector("h1:has-text('Acesso negado')", { timeout: 20000 }).catch(() => {});
   check("T1: delegado em /gae recebe HTTP 403 e a página de acesso negado", r403.status() === 403 && (await dp.innerText("body")).includes("Acesso negado"), `HTTP ${r403.status()}`);
   const [{ neg }] = await sql`SELECT COUNT(*)::int AS neg FROM audit_logs WHERE acao = 'ACESSO_NEGADO' AND actor_role = 'DELEGADO'`;
   check("T1: a tentativa ficou registada em audit_logs", neg >= 1, String(neg));
@@ -358,6 +371,7 @@ try {
   check("menu do observador só tem Desafios", (await op.locator("nav[aria-label=Principal] a").allTextContents()).join() === "Desafios");
   for (const rota of ["/gae", "/gae/ciclos", "/gae/utilizadores", "/gae/auditorias", "/delegado"]) {
     const resp = await op.goto(`${base}${rota}`);
+    await op.waitForSelector("h1:has-text('Acesso negado')", { timeout: 20000 }).catch(() => {});
     check(`T6: observador em ${rota} recebe HTTP 403`, resp.status() === 403 && (await op.innerText("body")).includes("Acesso negado"), `HTTP ${resp.status()}`);
   }
 

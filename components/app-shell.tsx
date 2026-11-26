@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { logoutAction } from "@/app/login/actions";
+import { Emblema } from "@/components/logo";
 import type { SessionUser } from "@/lib/auth";
 import { navFor, type Role } from "@/lib/rbac";
 
@@ -27,9 +28,12 @@ export function AppShell({
   return (
     <div className="min-h-screen md:flex">
       <aside className="flex flex-col bg-ink-2 text-white md:w-60 md:shrink-0">
-        <div className="px-5 py-5">
-          <p className="font-display text-2xl font-bold">PGAE</p>
-          <p className="text-xs text-white/60">UGS · GAE</p>
+        <div className="flex items-center gap-3 px-5 py-5">
+          <Emblema tamanho={44} priority />
+          <div>
+            <p className="font-display text-2xl font-bold leading-none">PGAE</p>
+            <p className="mt-1 text-xs text-white/60">UGS · GAE</p>
+          </div>
         </div>
         <nav aria-label="Principal" className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-1 md:flex-col md:pb-0">
           {items.map((item) =>

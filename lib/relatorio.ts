@@ -4,6 +4,7 @@ import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf
 import type { Sql } from "postgres";
 import { alertasCriticosAbertos, calcularKpis, rankingDocentes, type Filtros, type Kpis, type LinhaDocente } from "./bi-core.ts";
 import { AVISO_AMOSTRA, CLASSE_LABEL, K_MIN } from "./bi-metrics.ts";
+import { EMBLEMA_PNG_BASE64 } from "./brand-data.ts";
 
 export type Relatorio = {
   ciclo: { titulo: string; semestre: string; inicio: string; fim: string };
@@ -114,9 +115,11 @@ export async function paraPdf(r: Relatorio): Promise<Uint8Array> {
 
   // Cabeçalho
   pagina.drawRectangle({ x: 0, y: ALT - 70, width: LARG, height: 70, color: COR.ink });
-  pagina.drawText("PGAE", { x: M, y: ALT - 38, size: 22, font: negrito, color: rgb(1, 1, 1) });
+  const emblema = await doc.embedPng(Buffer.from(EMBLEMA_PNG_BASE64, "base64"));
+  pagina.drawImage(emblema, { x: M, y: ALT - 61, width: 52, height: 52 });
+  pagina.drawText("PGAE", { x: M + 62, y: ALT - 38, size: 22, font: negrito, color: rgb(1, 1, 1) });
   pagina.drawText("Universidade Gregório Semedo - Grupo de Acompanhamento Estudantil", {
-    x: M, y: ALT - 56, size: 9, font: fonte, color: rgb(0.85, 0.85, 0.9),
+    x: M + 62, y: ALT - 56, size: 9, font: fonte, color: rgb(0.85, 0.85, 0.9),
   });
   y = ALT - 100;
   texto("Relatório para a Direção", M, 18, negrito, COR.ink);
