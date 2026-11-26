@@ -123,9 +123,11 @@ Gráficos: série principal `--brand`, secundária `--ink-muted`; semânticas s�
 
 ## 7. Identidade e logótipo
 
-- **Provisório:** marca de texto "PGAE" em Space Grotesk 700 + "UGS · GAE" em IBM Plex Sans, sem símbolo.
-- **Oficial:** o logótipo da UGS e do GAE deve ser **fornecido ou aprovado pela instituição**. Não descarreguei nenhum da internet: marcas institucionais têm direitos de uso e o próprio guia de referência exige aprovação prévia da direção para peças com o nome e o logótipo da UGS/FENT. Assim que tiver o ficheiro (SVG/PNG com fundo transparente), entra em `public/brand/`.
-- Área de proteção: altura do "P" em redor do logótipo; mínimo 24 px de altura no ecrã.
+- **Oficial (aplicado):** o logótipo completo e o emblema da UGS, fornecidos pela equipa, vivem em `public/brand/` (PNG com fundo transparente) e como ícone do browser (`app/icon.png`, `app/apple-icon.png`). Os originais ficam em `design/logos-originais/` e `node scripts/preparar-logos.mjs` gera de novo os ficheiros (remove o fundo branco, suaviza as margens, corta o excesso).
+- **Onde aparece:** ecrã de login e página inicial (logótipo completo, acima, com a descrição centrada), menu lateral (emblema + PGAE), votação do estudante, páginas de erro e cabeçalho do relatório PDF.
+- Fundos claros: logótipo completo ou emblema. Fundos escuros (menu lateral): só o emblema.
+- Área de proteção: pelo menos 1/4 da largura do emblema à volta; nunca deformar nem recolorir.
+- O uso do logótipo em peças oficiais deve ter a aprovação da direção da UGS.
 
 ## 8. Acessibilidade e desempenho
 
@@ -137,6 +139,6 @@ Gráficos: série principal `--brand`, secundária `--ink-muted`; semânticas s�
 ## 9. Decisões para si
 
 1. Aprova o **azul `#004AAD`** como cor institucional adicional?
-2. Logótipo UGS/GAE: pode fornecer o ficheiro oficial?
+2. ~~Logótipo UGS/GAE~~: fornecido e aplicado (ver secção 7).
 3. Nome visível na interface: "PGAE" ou "Plataforma GAE"?
 4. Mantemos a navegação lateral para GAE/Delegado (recomendado) ou barra superior?

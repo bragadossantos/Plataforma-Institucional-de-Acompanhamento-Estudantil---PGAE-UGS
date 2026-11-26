@@ -1,5 +1,6 @@
 "use client";
 
+import { useHidratado } from "@/components/use-hidratado";
 import { useActionState, useEffect, useRef, useTransition } from "react";
 import { registarAuditoriaAction } from "./actions";
 import type { AcaoState } from "@/components/form-acao";
@@ -24,6 +25,7 @@ const GRAVIDADES = [
 
 export function AuditoriaForm({ docentes }: { docentes: { id: number; texto: string }[] }) {
   const [state, action, pending] = useActionState<AcaoState, FormData>(registarAuditoriaAction, {});
+  const hidratado = useHidratado();
   const [, startTransition] = useTransition();
   const ref = useRef<HTMLFormElement>(null);
 
@@ -120,7 +122,7 @@ export function AuditoriaForm({ docentes }: { docentes: { id: number; texto: str
       )}
       <div>
         <button
-          disabled={pending}
+          disabled={pending || !hidratado}
           className="min-h-11 rounded-control bg-accent px-4 font-semibold text-white disabled:opacity-60"
         >
           {pending ? "A enviar…" : "Enviar ao GAE"}

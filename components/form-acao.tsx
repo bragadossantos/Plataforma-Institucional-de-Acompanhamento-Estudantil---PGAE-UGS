@@ -1,5 +1,6 @@
 "use client";
 
+import { useHidratado } from "@/components/use-hidratado";
 import { useActionState, useEffect, useRef, useTransition } from "react";
 
 export type AcaoState = { erro?: string; ok?: string };
@@ -16,6 +17,7 @@ export function FormAcao({
   children: React.ReactNode;
 }) {
   const [state, formAction, pending] = useActionState<AcaoState, FormData>(action, {});
+  const hidratado = useHidratado();
   const [, startTransition] = useTransition();
   // Envio por onSubmit: o React não limpa os campos depois de um erro (o utilizador não perde o que escreveu).
   function enviar(e: React.FormEvent<HTMLFormElement>) {
@@ -44,7 +46,7 @@ export function FormAcao({
       )}
       <div>
         <button
-          disabled={pending}
+          disabled={pending || !hidratado}
           className="min-h-11 rounded-control bg-accent px-4 font-semibold text-white disabled:opacity-60"
         >
           {pending ? "A guardar…" : submit}

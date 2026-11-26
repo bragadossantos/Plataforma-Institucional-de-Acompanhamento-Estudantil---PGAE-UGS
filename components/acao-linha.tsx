@@ -1,5 +1,6 @@
 "use client";
 
+import { useHidratado } from "@/components/use-hidratado";
 import { useActionState } from "react";
 import type { Acao, AcaoState } from "./form-acao";
 
@@ -17,12 +18,13 @@ export function AcaoLinha({
   extra?: Record<string, string>;
 }) {
   const [state, formAction, pending] = useActionState<AcaoState, FormData>(action, {});
+  const hidratado = useHidratado();
   return (
     <form action={formAction} className="flex flex-col gap-1">
       <input type="hidden" name="id" value={id} />
       {extra && Object.entries(extra).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
       <button
-        disabled={pending}
+        disabled={pending || !hidratado}
         className="min-h-11 rounded-control border border-border px-3 text-sm font-semibold hover:bg-bg disabled:opacity-60"
       >
         {label}
